@@ -44,6 +44,6 @@ int main() {
     printf("Área: %.2f km²\n", area);
     printf("PIB: %.2f milhões\n", pib);
     printf("Pontos Turísticos: %d\n", pontos_turisticos);
-
+    //teste de commit
     return 0;
 }
