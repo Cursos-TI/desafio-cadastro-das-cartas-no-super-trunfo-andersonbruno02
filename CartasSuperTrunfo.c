@@ -1,77 +1,97 @@
 #include <stdio.h>
+#include <string.h>
 
-// Função para solicitar e ler os dados da cidade
-void lerDadosCidade(char codigo[], char nome[], int *populacao, float *area, float *pib, int *pontos_turisticos) {
-    printf("Cadastro de Cidade\n");
+// Estrutura para representar uma carta de cidade
+typedef struct {
+    char estado;
+    char codigo[4];
+    char nome[50];
+    unsigned long int populacao;
+    float area;
+    float pib;
+    int pontos_turisticos;
+    float densidade_populacional;
+    float pib_per_capita;
+    float super_poder;
+} Cidade;
+
+// Função para ler os dados de uma cidade
+void lerDadosCidade(Cidade *cidade, int numeroCarta) {
+    printf("\nDigite os dados da Cidade %d:\n", numeroCarta);
+
+    // Solicita o estado da cidade
+    printf("Digite o estado da cidade (uma letra): ");
+    scanf(" %c", &cidade->estado);
 
     // Solicita o código da cidade
     printf("Digite o código da cidade (ex: A01): ");
-    scanf("%s", codigo);
+    scanf("%s", cidade->codigo);
 
     // Solicita o nome da cidade
     printf("Digite o nome da cidade: ");
-    scanf(" %[^\n]", nome); // Lê a linha inteira incluindo espaços
+    scanf(" %[^\n]", cidade->nome);
 
     // Solicita a população da cidade
     printf("Digite a população da cidade: ");
-    scanf("%d", populacao);
+    scanf("%lu", &cidade->populacao);
 
     // Solicita a área da cidade
     printf("Digite a área da cidade (em km²): ");
-    scanf("%f", area);
+    scanf("%f", &cidade->area);
 
     // Solicita o PIB da cidade
     printf("Digite o PIB da cidade (em milhões): ");
-    scanf("%f", pib);
+    scanf("%f", &cidade->pib);
 
     // Solicita o número de pontos turísticos
     printf("Digite o número de pontos turísticos: ");
-    scanf("%d", pontos_turisticos);
+    scanf("%d", &cidade->pontos_turisticos);
+
+    // Calcula a densidade populacional
+    cidade->densidade_populacional = (float) cidade->populacao / cidade->area;
+
+    // Calcula o PIB per capita
+    cidade->pib_per_capita = (cidade->pib * 1000000) / cidade->populacao;
+
+    // Calcula o super poder (soma de todas as propriedades)
+    cidade->super_poder = cidade->populacao + cidade->area + cidade->pib + cidade->pib_per_capita + (1 / cidade->densidade_populacional) + cidade->pontos_turisticos;
 }
 
-// Função para calcular a densidade populacional
-float calcularDensidadePopulacional(int populacao, float area) {
-    return (float) populacao / area;
-}
+// Função para comparar duas cartas
+void compararCartas(Cidade cidade1, Cidade cidade2) {
+    printf("\nComparando as cartas:\n");
 
-// Função para calcular o PIB per capita
-float calcularPIBPerCapita(float pib, int populacao) {
-    return (pib * 1000000) / populacao; // Convertendo PIB para unidades monetárias
-}
+    // Comparação de população
+    printf("População: Cidade 1 (%lu) vs Cidade 2 (%lu) -> %d\n", cidade1.populacao, cidade2.populacao, cidade1.populacao > cidade2.populacao);
 
-// Função para exibir os dados da cidade
-void exibirDadosCidade(char codigo[], char nome[], int populacao, float area, float pib, int pontos_turisticos, float densidade_populacional, float pib_per_capita) {
-    printf("\nDados da Cidade Cadastrada:\n");
-    printf("Código: %s\n", codigo);
-    printf("Nome: %s\n", nome);
-    printf("População: %d habitantes\n", populacao);
-    printf("Área: %.2f km²\n", area);
-    printf("PIB: %.2f milhões\n", pib);
-    printf("Pontos Turísticos: %d\n", pontos_turisticos);
-    printf("Densidade Populacional: %.2f habitantes/km²\n", densidade_populacional);
-    printf("PIB per capita: %.2f\n", pib_per_capita);
+    // Comparação de área
+    printf("Área: Cidade 1 (%.2f) vs Cidade 2 (%.2f) -> %d\n", cidade1.area, cidade2.area, cidade1.area > cidade2.area);
+
+    // Comparação de PIB
+    printf("PIB: Cidade 1 (%.2f) vs Cidade 2 (%.2f) -> %d\n", cidade1.pib, cidade2.pib, cidade1.pib > cidade2.pib);
+
+    // Comparação de pontos turísticos
+    printf("Pontos Turísticos: Cidade 1 (%d) vs Cidade 2 (%d) -> %d\n", cidade1.pontos_turisticos, cidade2.pontos_turisticos, cidade1.pontos_turisticos > cidade2.pontos_turisticos);
+
+    // Comparação de densidade populacional (menor valor vence)
+    printf("Densidade Populacional: Cidade 1 (%.2f) vs Cidade 2 (%.2f) -> %d\n", cidade1.densidade_populacional, cidade2.densidade_populacional, cidade1.densidade_populacional < cidade2.densidade_populacional);
+
+    // Comparação de PIB per capita
+    printf("PIB per capita: Cidade 1 (%.2f) vs Cidade 2 (%.2f) -> %d\n", cidade1.pib_per_capita, cidade2.pib_per_capita, cidade1.pib_per_capita > cidade2.pib_per_capita);
+
+    // Comparação de super poder
+    printf("Super Poder: Cidade 1 (%.2f) vs Cidade 2 (%.2f) -> %d\n", cidade1.super_poder, cidade2.super_poder, cidade1.super_poder > cidade2.super_poder);
 }
 
 int main() {
-    // Definindo variáveis para os atributos da cidade
-    char codigo[4]; // Código da cidade (ex: A01)
-    char nome[50];  // Nome da cidade
-    int populacao;  // População da cidade
-    float area;     // Área da cidade em km²
-    float pib;      // PIB da cidade em milhões
-    int pontos_turisticos; // Número de pontos turísticos
-    float densidade_populacional; // Densidade populacional
-    float pib_per_capita; // PIB per capita
+    Cidade cidade1, cidade2;
 
-    // Ler os dados da cidade
-    lerDadosCidade(codigo, nome, &populacao, &area, &pib, &pontos_turisticos);
+    // Ler os dados das duas cidades
+    lerDadosCidade(&cidade1, 1);
+    lerDadosCidade(&cidade2, 2);
 
-    // Calcular densidade populacional e PIB per capita
-    densidade_populacional = calcularDensidadePopulacional(populacao, area);
-    pib_per_capita = calcularPIBPerCapita(pib, populacao);
-
-    // Exibir os dados da cidade
-    exibirDadosCidade(codigo, nome, populacao, area, pib, pontos_turisticos, densidade_populacional, pib_per_capita);
+    // Comparar as cartas
+    compararCartas(cidade1, cidade2);
 
     return 0;
 }
